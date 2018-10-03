@@ -1,25 +1,24 @@
 import requests
-import html
-import json
+import multiprocessing
+import html,json,time,os
+from get_list import get_list
 
 api_url='https://api.zhuwei.me/v1/captions/'
 
 with open('config.json','r') as conf:
 	config=json.load(conf)
 
-token=config['token']
-
-# test token
-# token='a2d09c7d76fced01f8be4b1f4cce8bec'
+if config['token']:
+	token=config['token']
+else:
+	token=config['test_token']
+play_list=config['play_list_file']
+input_playlist_url=config['input_playlist_url']
 
 #字幕获取方法
 def get_sub(api_url,title,**kw):
+	
 	#构造想要的字幕url
-	# sub_url=api_url
-	# if kw['multilanguage']:
-	# 	sub_url=sub_url[:55]+'en-auto?api-key='+token+'&multilanguage=multilanguage'
-	# 	# sub_url='/'.join(sub_url.split('/')[:-2]) +'/en-auto?api-key='+token+'&multilanguage=multilanguage'
-	# else:
 	sub_url=api_url+'?api-key='+token\
 	+('&multilanguage=multilanguage' if kw['multilanguage'] else '')\
 	+('&notimeline=notimeline' if kw['notimeline'] else '')
@@ -34,42 +33,71 @@ def get_sub(api_url,title,**kw):
 		title=title.replace(i,'')
 	
 	#写入字幕内容文件
-	with open('/home/shadow771/Videos/youtube/%s.srt' % title,'w') as sub_file:
+	if not os.path.exists('Download_subtitles'):
+		os.mkdir('Download_subtitles')
+	with open('Download_subtitles/%s.srt' % html.unescape(title),'w') as sub_file:
 		sub_file.write(html.unescape(sub_content))
-	print('Download '+title+'.srt complete!')
+	print('Download 【'+title+'.srt】 complete!')
 
-def main():
-	have_sub=requests.get(api_url+v_id+'?'+'api-key='+token).json()
-	print(have_sub)
+
+#主任务 查询字幕存在与否
+def req_api(v_url):
+	have_sub=requests.get(api_url+v_url[-11:]+'?'+'api-key='+token).json()
+	# print(have_sub)
 	try:
 		res=have_sub['response']['captions']
 		sub_title=res['title']
 		sub_list=res['available_captions']
-		print(sub_list)
+		# print(sub_list)
 	except Exception as e:
-		print('Can\'t find sub! check url!',e)
+		print('Can\'t find sub! check video id!',e)
 
 	find=False
 	for i in sub_list:
 		if config['multilanguage']:
 			#寻找目标双语字幕
 			if config['which_language_to_zh'] in i['language']:
-				print('Find '+i['language']+' and zh-Hans subtitle!')
+				print('Find （'+sub_title+'） 【'+i['language']+' and zh-Hans】 subtitle!')
 				get_sub(i['caption_content_url'],sub_title,**config)
 				find=True
 				break
 		#单语言字幕
 		else:
-			if i['language'] in config['language']:
-				print('Find '+i['language']+'subtitle!')
+			if i['language'] in config['single_language']:
+				print('Find （'+sub_title+'） 【'+i['language']+'】 subtitle!')
 				get_sub(i['caption_content_url'],sub_title,**config)
 				find=True
+				break
+	#写入下载历史
 	if find:
-		with open('/home/shadow771/Videos/youtube/history.txt','a') as his:
-			his.write(v_url+'\n') 
+		with open('history.txt','a') as his_log:
+			his=sub_title+'   '+time.strftime("%Y-%m-%d【%H:%M】", time.localtime())\
+			+'\n'+v_url+'\n\n'
+			his_log.write(his) 
 	else:
 		print('Can\'t find '+i['language']+' subtitle!')
+
+#多进程下载字幕列表
+def download_list(tasks):
+	cpu_count=multiprocessing.cpu_count()
+	pool=multiprocessing.Pool(cpu_count)
+	pool.map(req_api,tasks)
+	
+#入口
+def main():
+	if input_playlist_url:
+		download_list(get_list())
+	elif play_list:
+		try:
+			with open('%s'% play_list,'r') as v_list:
+				tasks=v_list.read().split('\n')
+			download_list(tasks)
+		except Exception as e:
+			print('Can\'t find list! check your play_list\'s path!',e)				
+	else:
+		v_url=input('please input video url:')
+		req_api(v_url)
+
+
 if __name__ == '__main__':
-	v_url=input('please input video url:')
-	v_id=v_url[-11:]
 	main()
