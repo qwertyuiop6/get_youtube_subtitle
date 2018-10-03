@@ -24,8 +24,9 @@
 * notimeline : 字幕不要时间线
 * input_playlist_url : 是否开启模式:输入playlist链接进行下载
 * play_list_file : 从所填文件读取链接下载(文件可自行创建,手动添加url,一行一个链接)
-
+<br>
 > 环境:Python3, 依赖: requests (pip install requests)
+
 #### Usage:
 1 . 单个视频链接下载字幕:
 
@@ -41,5 +42,5 @@
 %@##----确保有文件后----------------->><br>
 >2 ."play_list_file" 填入文件全称<br>3 . 同时确保"input_playlist_url"为false<br>4 . 运行 python get_sub.py
 
-###　Other
+###Other:
 * 字幕语言支持详见[api.zhuwei.me](https://api.zhuwei.me)
