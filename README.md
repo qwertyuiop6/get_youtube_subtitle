@@ -42,5 +42,6 @@
 %@##----确保有文件后----------------->><br>
 >2 ."play_list_file" 填入文件全称<br>3 . 同时确保"input_playlist_url"为false<br>4 . 运行 python get_sub.py
 
-###Other:
+### Other:
+
 * 字幕语言支持详见[api.zhuwei.me](https://api.zhuwei.me)
