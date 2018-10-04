@@ -5,6 +5,6 @@
 	"multilanguage":false,
 	"which_language_to_zh":"en",
 	"notimeline":false,		
-	"input_playlist_url":true,
+	"input_playlist_url":false,
 	"play_list_file":""	
 }
