@@ -17,7 +17,7 @@ def get_list():
 			v_list[i]='https://www.youtube.com/watch?v='+v_list[i]
 		return v_list
 	else:
-		print('can\'t find the video list!')
+		print('Can\'t find the video list!')
 		return False
 
 def save_list(res):
