@@ -12,7 +12,7 @@
 	"multilanguage":false,			//是否下载双语,true 或false
 	"which_language_to_zh":"en",		//哪种语言=>简中,"en","kr","jp"...
 	"notimeline":false,			//无字幕时间线 ,ture 或false
-	"input_playlist_url":false,		//输入playlist链接批量下载
+	"input_playlist_url":false,		//是否开启:输入playlist链接批量下载,true 或 false
 	"play_list_file":""			//从指定文件读取视频链接下载字幕
 }
 ```
