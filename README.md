@@ -32,7 +32,7 @@
 > python get_sub.py
 
 2 . 从本地文件批量读取视频链接下载字幕(需申请api-key):
->1 . 手动创建文件,一行一个视频链接 
+>1 . 手动创建文件,一行一个视频链接<br>
 >2 . "play_list_file" 填入文件**全称**(.xxx后缀不要忘记加)<br>3 . 运行 python get_sub.py
 
 ３.将playlist所有视频链接暂存文件再下载
