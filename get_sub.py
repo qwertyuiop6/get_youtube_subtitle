@@ -19,7 +19,7 @@ class Sub_getter(object):
 		else:
 			self.token=config['test_token']
 		self.play_list=config['play_list_file']
-		self.input_playlist_url=config['input_playlist_url']
+		# self.input_playlist_url=config['input_playlist_url']
 
 	#字幕获取方法
 	def get_sub(self,api_url,title,**kw):
@@ -34,9 +34,9 @@ class Sub_getter(object):
 		sub_content=sub_res.json().get('contents').get('content')
 		# print(sub_content)
 		# sub_name=input('Input the sub_file_name:')
-		useless=['&quot;','?']
-		for i in useless:
-			title=title.replace(i,'')
+		# useless=['&quot;','?']
+		# for i in useless:
+		# 	title=title.replace(i,'')
 		
 		#写入字幕内容文件
 		if not os.path.exists('Download_subtitles'):
@@ -50,7 +50,7 @@ class Sub_getter(object):
 	#主任务 查询字幕存在与否
 	def req_api(self,v_url):
 		have_sub=requests.get(self.api_url+v_url[-11:]+'?'+'api-key='+self.token).json()
-		# print(have_sub)
+		#print(have_sub)
 		if have_sub['meta']['code']==200:
 			res=have_sub['response']['captions']
 			sub_title=res['title']
@@ -82,14 +82,13 @@ class Sub_getter(object):
 				print('Can\'t find '+i['language']+' subtitle!')
 		else:
 			#失败历史文件
-			print('Can\'t find '+v_url+'sub! check video id!')
+			print('Can\'t find '+v_url+' sub! check video id!')
 			with open('Failure_history.txt','a') as fail_log:
 					fail=v_url+'   '+time.strftime("%Y-%m-%d【%H:%M】", time.localtime())+'\n\n'
 					fail_log.write(fail) 
 
 	#多线程下载字幕列表
 	def download_list(self,tasks):
-		self.complete=0
 		# cpu_count=multiprocessing.cpu_count()
 		# pool=multiprocessing.Pool(cpu_count)
 		# pool.map(self.req_api,tasks)
@@ -100,22 +99,25 @@ class Sub_getter(object):
 
 
 	def run(self):
-		if self.input_playlist_url:
-			try:
-				self.download_list(get_list())
-			except Exception:
-				print('Check your playlist url or api-key!')
-		
-		elif self.play_list:
+		self.complete=0
+
+		if self.play_list:
 			try:
 				with open('%s'% self.play_list,'r') as v_list:
 					tasks=v_list.read().split('\n')
 				self.download_list(tasks)
 			except Exception as e:
-				print('Can\'t find list! check your play_list\'s path!',e)				
+				print('Can\'t find list! check your play_list\'s path!',e)
+
 		else:
-			v_url=input('Please input video url:')
-			self.req_api(v_url)
+			v_url=input('Please input video or playlist url:')
+			if 'list=' in v_url:	
+				try:
+					self.download_list(get_list(v_url))
+				except Exception:
+					print('Check your playlist url or api-key!')
+			else:
+				self.req_api(v_url)
 
 
 if __name__ == '__main__':

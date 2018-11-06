@@ -1,10 +1,1 @@
-{	
-	"test_token":"a2d09c7d76fced01f8be4b1f4cce8bec",  	
-	"token":"", 
-	"single_language":"zh-Hans",	
-	"multilanguage":false,
-	"which_language_to_zh":"en",
-	"notimeline":false,		
-	"input_playlist_url":false,
-	"play_list_file":""	
-}
+{"test_token": "a2d09c7d76fced01f8be4b1f4cce8bec", "token": "", "single_language": "zh-Hans", "multilanguage": false, "which_language_to_zh": "en", "notimeline": false, "play_list_file": ""}
