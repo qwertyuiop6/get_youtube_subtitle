@@ -97,7 +97,7 @@ class Sub_getter(object):
 		# cpu_count=multiprocessing.cpu_count()
 		# pool=multiprocessing.Pool(cpu_count)
 		# pool.map(self.req_api,tasks)
-		with futures.ThreadPoolExecutor(50) as e:
+		with futures.ThreadPoolExecutor(5) as e:
 			e.map(self.req_api,tasks)
 		
 		print('Download complete,Success get:【',self.complete,'】subtitles. Failure:【',len(tasks)-self.complete,'】')
